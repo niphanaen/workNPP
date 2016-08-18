@@ -39,7 +39,8 @@
       "type": "build"
     },
     "Microsoft.AspNet.WebApi.Client": "5.2.3",
-    "Microsoft.AspNetCore.Session": "1.0.0"
+    "Microsoft.AspNetCore.Session": "1.0.0",
+    "BundlerMinifier.Core": "2.2.281"
   },
 
   "tools": {

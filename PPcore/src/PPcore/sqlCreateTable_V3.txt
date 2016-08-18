@@ -16,21 +16,6 @@ create table product_group (
 go
 
 /*==============================================================*/
-/* Table: product_group                                         */
-/*==============================================================*/
-create table product_group (
-   product_group_code   varchar(30)          not null,
-   product_group_desc   nvarchar(100)        not null,
-   x_status             char(1)              null,
-   x_note               nvarchar(50)         null,
-   x_log                nvarchar(500)        null,
-   id uniqueidentifier NOT NULL DEFAULT (newid()),
-   rowversion           timestamp            null,
-   constraint pk_product_group primary key (product_group_code)
-)
-go
-
-/*==============================================================*/
 /* Table: product_type                                          */
 /*==============================================================*/
 create table product_type (
