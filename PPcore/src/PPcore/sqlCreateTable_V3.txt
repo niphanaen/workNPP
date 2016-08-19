@@ -480,6 +480,7 @@ go
 /*==============================================================*/
 create table member (
    member_code          varchar(30)          not null,
+   mem_username			varchar(50)			 null,
    mem_password			varchar(40)			 null,
    title                nvarchar(100)        null,
    fname                nvarchar(100)        null,

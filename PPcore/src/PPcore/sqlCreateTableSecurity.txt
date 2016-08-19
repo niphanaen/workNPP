@@ -91,3 +91,6 @@ GO
 ALTER TABLE SecurityMenus ADD CONSTRAINT PK_SecurityMenus PRIMARY KEY CLUSTERED (MenuId ASC);
 GO
 
+INSERT INTO [dbo].[SecurityRoles] ([RoleId], [RoleName], [CreatedBy], [CreatedDate], [EditedBy], [EditedDate], [x_status], [x_note], [x_log]) VALUES (N'9a1a4601-f5ee-4087-b97d-d69e7f9bfd7e', N'Operators', N'f5e3130e-aa2e-4e82-8cf6-af887a955eb8', N'2016-08-18 09:43:38', N'a6e221e4-6f2b-413c-97c2-1b282cfca657', N'2016-08-18 09:43:38', N'Y', NULL, NULL)
+INSERT INTO [dbo].[SecurityRoles] ([RoleId], [RoleName], [CreatedBy], [CreatedDate], [EditedBy], [EditedDate], [x_status], [x_note], [x_log]) VALUES (N'c5a644a2-97b0-40e5-aa4d-e2afe4cdf428', N'Administrators', N'9f514d3a-2344-424b-9735-b58e828fa9f0', N'2016-08-18 09:43:29', N'd003ce81-285b-40d3-95dd-7d6309fc2555', N'2016-08-18 09:43:29', N'Y', NULL, NULL)
+INSERT INTO [dbo].[SecurityRoles] ([RoleId], [RoleName], [CreatedBy], [CreatedDate], [EditedBy], [EditedDate], [x_status], [x_note], [x_log]) VALUES (N'17822a90-1029-454a-b4c7-f631c9ca6c7d', N'Members', N'c08497b4-cc74-4a06-b953-6c606e64c6ef', N'2016-08-18 09:43:46', N'24d99240-640d-4886-8b66-30e44375e744', N'2016-08-18 09:43:46', N'Y', NULL, NULL)
