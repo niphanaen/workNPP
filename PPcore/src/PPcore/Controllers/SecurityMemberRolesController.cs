@@ -18,41 +18,14 @@ namespace PPcore.Controllers
             _scontext = scontext;    
         }
 
-        // GET: SecurityMemberRoles
         public async Task<IActionResult> DetailsAsRoleMenu()
         {
             return View(await _scontext.SecurityRoles.Where(sr => sr.x_status != "N").OrderBy(sr => sr.CreatedDate).ToListAsync());
         }
 
-        // GET: SecurityMemberRoles/Details/5
-        public async Task<IActionResult> Details(Guid? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var securityMemberRoles = await _scontext.SecurityMemberRoles.SingleOrDefaultAsync(m => m.UserId == id);
-            if (securityMemberRoles == null)
-            {
-                return NotFound();
-            }
-
-            return View(securityMemberRoles);
-        }
-
-        // GET: SecurityMemberRoles/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: SecurityMemberRoles/Create
-        // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
-        // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("UserId,RoleId,CreatedBy,CreatedDate,EditedBy,EditedDate,x_log,x_note,x_status")] SecurityMemberRoles securityMemberRoles)
+        public async Task<IActionResult> CreateUser([Bind("UserId,RoleId,CreatedBy,CreatedDate,EditedBy,EditedDate,x_log,x_note,x_status")] SecurityMemberRoles securityMemberRoles)
         {
             if (ModelState.IsValid)
             {
@@ -64,7 +37,14 @@ namespace PPcore.Controllers
             return View(securityMemberRoles);
         }
 
-        // GET: SecurityMemberRoles/Edit/5
+
+
+
+
+
+
+
+
         public async Task<IActionResult> Edit(Guid? id)
         {
             if (id == null)

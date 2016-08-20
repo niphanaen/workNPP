@@ -3,16 +3,16 @@
     Layout = null;
 }
 
-@{ var countOrder = 0; var dcolor = ""; var bcolor = "";}
+@{ var countOrder = 0; var dcolor = ""; var bcolor = ""; var utype = "";}
 @foreach (var item in Model)
 {
     countOrder++;
-    if (countOrder > 3) { dcolor = "background-color:#FFC000;"; bcolor = "#FFC000"; }
-    else if (countOrder == 1) { dcolor = "color:white;background-color:#313131;"; bcolor = "#313131"; }
-    else if (countOrder == 2) { dcolor = "background-color:#337AB7;"; bcolor = "#337AB7"; }
-    else if (countOrder == 3) { dcolor = "background-color:#5CB85C;"; bcolor = "#5CB85C"; }
+    if (countOrder > 3) { utype = "O"; dcolor = "background-color:#FFC000;"; bcolor = "#FFC000"; }
+    else if (countOrder == 1) { utype = "A"; dcolor = "color:white;background-color:#313131;"; bcolor = "#313131"; }
+    else if (countOrder == 2) { utype = "O"; dcolor = "background-color:#337AB7;"; bcolor = "#337AB7"; }
+    else if (countOrder == 3) { utype = "M"; dcolor = "background-color:#5CB85C;"; bcolor = "#5CB85C"; }
     <li style="cursor:pointer;"> @*onMouseOver="this.style.backgroundColor = '@bcolor';" onmouseout="this.style.backgroundColor = 'tranparent';"*@
-        <a href="index.html">&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => item.RoleName)</a>
+        <a onclick="aUserForm(@utype)">&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => item.RoleName)</a>
     </li>
     @*<div style="@dcolor;height:45px;margin-bottom:3px;cursor:pointer;border:1px solid darkgrey;" onMouseOver="this.style.backgroundColor = 'transparent';" onMouseOut="    this.style.backgroundColor = '#313131'";> 
         <div href="index.html" style="vertical-align:central;font-size:20px;">&nbsp;&nbsp;&nbsp;@Html.DisplayFor(modelItem => item.RoleName)</div>

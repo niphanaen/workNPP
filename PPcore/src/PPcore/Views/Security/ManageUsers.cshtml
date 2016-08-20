@@ -4,65 +4,9 @@
         </div>
     </div>
     <div class="panel">
-        @*<div style="position:absolute;width:240px;margin-left:10px;">
-            <div class="navbar-default sidebar" role="navigation">
-                <div class="sidebar-nav navbar-collapse">
-                    <ul class="nav" id="aRoleMenu"></ul>
-                </div>
-
-
-            </div>
-
-
-            <div id="aRoleMenu"></div>
-
-
-            <div style="position:absolute;width:7px;height:130px;top:48px;left:250px;background-color:red;z-index:3;">&nbsp;</div>
-
-
-        </div>
-
-        <div style="position:absolute;margin-left:260px;margin-top:10px;margin-right:10px">
-            <div class="row">
-                <div class="col-lg-12">
-
-
-                    <div class="panel panel-blue">
-                        <div class="panel-heading">
-                            <div class="pull-left" style="margin-top:-2px;">
-                                <div id="btnCreate" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-plus-square " aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;เพิ่มผู้ใช้ระดับ Administrators&nbsp;&nbsp;&nbsp;</div>
-                            </div>
-                        </div>
-
-                        <!-- /.panel-heading -->
-                        <div style="position:absolute;left:250px;top:70px;"><span class="badge"></span></div>
-                        <div class="panel-body" id="accountManageBody">
-
-
-
-
-                        </div>
-                        <!-- /.panel-body -->
-                    </div>
-
-
-
-
-                </div>
-
-            </div>
-
-        </div>
-
-
-
-        <br/>
-        <br/>*@
-
-
 
         <div class="row">
-            <div style="width:240px;margin-left:20px;">
+            <div style="width:240px;margin-left:20px;margin-top:10px;">
                 <div class="navbar-default sidebar" role="navigation">
                     <div class="sidebar-nav navbar-collapse">
                         <ul class="nav" id="aRoleMenu"></ul>
@@ -74,7 +18,7 @@
                 <br/>
             </div>
 
-            <div style="margin-left:270px;margin-top:-15px;margin-right:20px">
+            <div style="margin-left:270px;margin-top:-45px;margin-right:20px">
 
 
 
@@ -85,21 +29,58 @@
                         <div class="panel panel-blue">
                             <div class="panel-heading">
                                 <div class="pull-left" style="margin-top:-2px;">
-                                    <div id="btnCreate" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-plus-square " aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;เพิ่มผู้ใช้ระดับ Administrators&nbsp;&nbsp;&nbsp;</div>
+
+                                    <div class="btn-group">
+                                        <button id="btnCreate" type="button" class="btn btn-default dropdown-toggle btn-panel-yellow" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            &nbsp;<i class="fa fa-plus-square " aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;เพิ่มผู้ใช้ระดับ Administrators&nbsp;&nbsp;&nbsp;
+                                        </button>
+                                        <div class="dropdown-menu" id="usernameDropdown">
+                                            <div style="height:11px;margin-top:-5px;background-color:#FFC000;border-top-left-radius:inherit;border-top-right-radius:inherit;"></div>
+                                            <input id="utype" type="text" style="display:none">
+                                            <form style="width:250px;margin-left:10px;margin-right:10px;">
+                                                <div style="color:#313131;margin-top:10px;margin-bottom:-10px;">ผู้ใช้ใหม่ระดับ Administrators</div>
+                                                <hr />
+                                                <div class="form-group input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-user" style="font-size:17px"></i>
+                                                    </span>
+                                                    <input id="uname" type="text" class="form-control" placeholder="ชื่อผู้ใช้งาน">
+                                                </div>
+                                                <div class="form-group input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-key"></i>
+                                                    </span>
+                                                    <input id="upwd" type="password" class="form-control" placeholder="กำหนดรหัสผ่าน">
+                                                </div>
+
+                                                <div class="form-group input-group">
+                                                    <span class="input-group-addon">
+                                                        <i class="fa fa-key"></i>
+                                                    </span>
+                                                    <input id="upwdrepeat" type="password" class="form-control" placeholder="รหัสผ่านอีกครั้ง">
+                                                </div>
+
+                                                <span id="userMsg" class="text-danger" style="display:none;margin-top:-10px;margin-left:50px;position:absolute"></span>
+                                                <br />
+                                                <button type="button" id="btnCreateUser" class="btn btn-default btn-panel-yellow" onclick="createUser($('#utype').val());">&nbsp;<i class="fa fa-plus-square " aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;เพิ่ม&nbsp;&nbsp;&nbsp;</button>
+                                                <br />
+                                            </form>
+                                        </div>
+                                    </div>
+
+
+
                                 </div>
                             </div>
 
-                            <!-- /.panel-heading -->
-                            @*<div style="position:absolute;left:250px;top:70px;"><span class="badge"></span></div>*@
-
                             <div class="panel-body" id="accountManageBody">
-
+                                <div style="position:absolute;width:7px;height:230px;top:48px;left:250px;background-color:red;z-index:3;">&nbsp;</div>
 
 
 
                             </div>
-                            <!-- /.panel-body -->
-                            <div style="position:absolute;width:7px;height:230px;top:48px;left:250px;background-color:red;z-index:3;">&nbsp;</div>
+
+                            
                         </div>
 
 
@@ -147,13 +128,15 @@
         $(document).ready(function () {
             aRoleMenu();
             a_details_as_table("A");
-            //accountManageBody
-            $('#btnSend').on('click', function () {
+            $('#usernameDropdown').off('click').on('click', function (e) {
+                e.stopPropagation();
+            });
+            $('#btnCreateUser00').off('click').on('click', function () {
                 if (!isInputEmpty()) {
                     $.ajax({
                         async: true,
                         type: "POST",
-                        url: "@Url.Action("EMailAllMembersSend", "news")",
+                        url: "@Url.Action("CreateUser", "Security")",
                         data: {
                             emailCode: '@ViewBag.emailCode',
                             topic: $('#topic').val(),
@@ -209,6 +192,58 @@
                 var table = setTable_default($('#a_table'), w);
                 table.$('tr:first').click();
             });
+        }
+        function aUserForm(utype) {
+            $.ajax({
+                type: 'get', url: '@Url.Action("CreateUser", "SecurityMemberRolesController")' + '?utype=' + utype,
+            }).done(function (resp) {
+                $('#a_create_form').html(resp);
+            });
+        }
+        function createUser(utype) {
+            if (utype == 'A') {
+                alert("test");
+
+            }
+            else if (utype == 'O')
+            {
+
+            
+            }
+
+            $('#rolenameMsg').hide();
+            if ($('#rolename').val()) {
+                $.ajax({
+                    async: true,
+                    type: "POST",
+                    url: "@Url.Action("CreateRole", "SecurityRoles")",
+                    data: {
+                    RoleName: $('#rolename').val()
+                    },
+                success: function (data) {
+                    if (data.result == "dup") {
+                        $('#rolenameMsg').text('ตรวจพบชื่อกลุ่มซ้ำ');
+                        $('#rolenameMsg').show();
+                    } else if (data.result == "success") {
+                        $('#rolename').val(''); $('#rolenameMsg').hide();
+                        window.location.href = '@Url.Action("ManageRoles", "Security")';
+                    } else {
+                        $('#rolenameMsg').text('ตรวจพบความผิดพลาด กรุณาติดต่อผู้ดูแลระบบ');
+                        $('#rolenameMsg').show();
+                    }
+                }
+            });
+            //$('#a_label').text('ระบบได้ทำการจัดส่งอีเมลเรียบร้อย');
+            //$('#a_body').text('ระบบได้ทำการจัดส่งอีเมลเรียบร้อยแล้ว');
+            //$('#a_modal').modal({ backdrop: 'static', keyboard: false });
+            //
+        }
+        else
+        {
+                    $('#rolenameMsg').text('กรุณากรอกข้อมูล');
+        $('#rolenameMsg').show();
+        }
+
         }
     </script>
 }
