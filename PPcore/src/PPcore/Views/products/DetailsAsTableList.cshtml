@@ -19,10 +19,13 @@
                 </div>
             </form>
         </div>
-        <div class="pull-right" style="margin-top:-2px;">
-            <div id="btnCreateProduct" class="btn btn-default btn-panel-yellow" onclick="mem_productProductCreateGet('@ViewBag.memberId')">&nbsp;<i class="fa fa-file" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;&nbsp;เพิ่ม&nbsp;&nbsp;&nbsp;&nbsp;</div>
-            <div id="btnEditProduct" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-pencil-square-o" aria-hidden="true" style="color:white;"></i>&nbsp;แก้ไข&nbsp;&nbsp;</div>
-        </div>
+        @if (ViewBag.IsMember != 1)
+        {
+            <div class="pull-right" style="margin-top:-2px;">
+                <div id="btnCreateProduct" class="btn btn-default btn-panel-yellow" onclick="mem_productProductCreateGet('@ViewBag.memberId')">&nbsp;<i class="fa fa-file" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;&nbsp;เพิ่ม&nbsp;&nbsp;&nbsp;&nbsp;</div>
+                <div id="btnEditProduct" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-pencil-square-o" aria-hidden="true" style="color:white;"></i>&nbsp;แก้ไข&nbsp;&nbsp;</div>
+            </div>
+        }
     </div>
     <!-- /.panel-heading -->
     <div class="panel-body">

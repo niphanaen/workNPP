@@ -58,7 +58,7 @@ namespace PPcore.Controllers
 
             try
             {
-                _context.Database.ExecuteSqlCommand("INSERT INTO mem_worklist (rec_no,member_code,company_name_th,company_name_eng,position_name_th,position_name_eng,work_year,office_address,x_status) VALUES (0,'" + member.member_code + "',N'" + company_name_th + "',N'" + company_name_eng + "',N'" + position_name_th + "',N'" + position_name_eng + "',N'" + work_year + "',N'" + office_address + "','Y')");
+                _context.Database.ExecuteSqlCommand("INSERT INTO mem_worklist (member_code,company_name_th,company_name_eng,position_name_th,position_name_eng,work_year,office_address,x_status) VALUES ('" + member.member_code + "',N'" + company_name_th + "',N'" + company_name_eng + "',N'" + position_name_th + "',N'" + position_name_eng + "',N'" + work_year + "',N'" + office_address + "','Y')");
             }
             catch (SqlException ex)
             {

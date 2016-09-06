@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using PPcore.Models;
 using Newtonsoft.Json;
 using System.Data.SqlClient;
+using Microsoft.AspNetCore.Http;
 
 namespace PPcore.Controllers
 {
@@ -21,12 +22,22 @@ namespace PPcore.Controllers
         }
 
         // GET: product/DetailsAsTableList
-        public IActionResult DetailsAsTableList(string memberId)
+        public IActionResult DetailsAsTableList(string memberId, string IsDetailsPersonal)
         {
+            var roleId = HttpContext.Session.GetString("roleId");
+            if (roleId != "17822a90-1029-454a-b4c7-f631c9ca6c7d") //Not member
+            {
+                ViewBag.IsMember = 0;
+            }
+            else //Is member
+            {
+                ViewBag.IsMember = 1;
+            }
             ViewBag.product_group = new SelectList(_context.product_group, "product_group_code", "product_group_desc", "1");
             ViewBag.memberId = memberId;
 
-            List<product> p = new List<product>();
+            List<product> p = new List<product>(); 
+
             return View(p);
         }
 

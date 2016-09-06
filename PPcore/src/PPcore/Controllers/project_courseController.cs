@@ -19,12 +19,13 @@ namespace PPcore.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string id)
+        public IActionResult Index(string id, string v)
         {
             var pj = _context.project.SingleOrDefault(p => p.id == new Guid(id));
             ViewBag.projectId = pj.id;
             ViewBag.projectCode = pj.project_code;
             ViewBag.countRecords = _context.project_course.Where(pc => pc.project_code == pj.project_code).Count();
+            if (!String.IsNullOrEmpty(v)) { ViewBag.IsDetails = true; } else { ViewBag.IsDetails = false; }
             return View(new project_course());
         }
 
@@ -190,7 +191,7 @@ namespace PPcore.Controllers
             return View(project_course);
         }
 
-        public async Task<IActionResult> CourseEdit(string id)
+        public async Task<IActionResult> CourseEdit(string id, string v)
         {
             if (id == null)
             {
@@ -206,6 +207,7 @@ namespace PPcore.Controllers
             ViewBag.ctype_code = project_course.ctype_code;
             ViewBag.active_member_join = _context.project_course_register.Where(pcr => pcr.course_code == project_course.course_code).Count();
             ViewBag.passed_member = _context.project_course_register.Where(p => (p.course_code == project_course.course_code) && (p.course_grade >= project_course.passed_score)).Count();
+            if (!String.IsNullOrEmpty(v)) { ViewBag.IsDetails = true; } else { ViewBag.IsDetails = false; }
             return View(project_course);
         }
 

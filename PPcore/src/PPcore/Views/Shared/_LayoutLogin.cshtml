@@ -113,7 +113,7 @@
                 if ((cid_card != '') && (fname != '') && (lname != '') && (birthdate != '') && (mobile != '') && (email != '')) {
                     $.ajax({
                         type: 'post',
-                        url: '@Url.Action("Create", "Account")' + "?cid_card=" + cid_card + "&fname=" + fname + "&lname=" + lname + "&birthdate=" + birthdate + "&mobile=" + mobile + "&email=" + email + "&mem_photo=" + mem_photo + "&cid_card_pic=" + cid_card_pic,
+                        url: '@Url.Action("RegisterMember", "Home")' + "?cid_card=" + cid_card + "&fname=" + fname + "&lname=" + lname + "&birthdate=" + birthdate + "&mobile=" + mobile + "&email=" + email + "&mem_photo=" + mem_photo + "&cid_card_pic=" + cid_card_pic,
                     }).done(function (resp) {
                         if (resp.result == "success") {
                             window.location.replace("@Url.Action("Index","Home")");
@@ -135,11 +135,10 @@
                 if ((uname != '') && (upwd != '')) {
                     $.ajax({
                         type: 'post',
-                        url: '@Url.Action("Login", "Account")' + "?uname=" + uname + "&upwd=" + upwd,
+                        url: '@Url.Action("Login", "Home")' + "?uname=" + uname + "&upwd=" + upwd,
                     }).done(function (resp) {
                         if (resp.result == "success") {
-                            //window.location.replace("@Url.Action("Index","members")");
-                            window.location.replace("@Url.Action("Index","Home")");
+                            window.location.replace(resp.url);
                         } else if (resp.result == "fail") {
                             $('#waitBtnConfirm').hide();
                             $('#loginMsg').text('ชื่อผู้ใช้งานหรือรหัสผ่านไม่ถูกต้อง');
@@ -157,7 +156,7 @@
                 if ((uname != '')) {
                     $.ajax({
                         type: 'post',
-                        url: '@Url.Action("ForgetPwd", "Account")' + "?uname=" + uname + "&upwd=" + upwd,
+                        url: '@Url.Action("ForgetPwd", "Home")' + "?uname=" + uname + "&upwd=" + upwd,
                     }).done(function (resp) {
                         if (resp.result == "success") {
                             $('#loginMsg').text('ระบบได้ทำการจัดส่งรหัสผ่านไปยังอีเมลที่กำหนดไว้เรียบร้อยแล้ว');

@@ -1,4 +1,5 @@
 ﻿@model PPcore.Models.project_course
+@addTagHelper "*, PPcore"
 
 <div id="page-wrapper">
     <div class="row">
@@ -14,12 +15,25 @@
                         <li class="active">
                             <a data-toggle="tab">หลักสูตรอบรม</a>
                         </li>
-                        <li>
-                            <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "course_instructor")'+'?id='+'@Model.id'">วิทยากร</a>
-                        </li>
-                        <li>
-                            <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "course_train_place")'+'?id='+'@Model.id'">สถานที่จัดอบรม</a>
-                        </li>
+                        @if (!ViewBag.IsDetails)
+                        {
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "course_instructor")'+'?id=@Model.id'">วิทยากร</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "course_train_place")'+'?id=@Model.id'">สถานที่จัดอบรม</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "course_instructor")'+'?id=@Model.id&v=1'">วิทยากร</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "course_train_place")'+'?id=@Model.id&v=1'">สถานที่จัดอบรม</a>
+                            </li>
+                        }
+
                     </ul>
                     <div style="background-color:#093D6A;height:8px;"></div>
                     <br />
@@ -27,7 +41,10 @@
 
                         <form asp-action="CourseEdit"><input asp-for="id" />
                             <div class="pull-right" style="margin-top:-72px;">
-                                <button id="btnSave" type="submit" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-floppy-o" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;จัดเก็บ&nbsp;&nbsp;</button>
+                                @if (!ViewBag.IsDetails)
+                                {
+                                    <button id="btnSave" type="submit" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-floppy-o" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;จัดเก็บ&nbsp;&nbsp;</button>
+                                }
                                 <div id="btnDetails" class="btn btn-default btn-panel-yellow" onclick="location.href='@Url.Action("CourseIndex", "project_course")'">&nbsp;<i class="fa fa-file-text" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;ดูข้อมูลทั้งหมด</div>
                             </div>
                             <div class="form-horizontal">
@@ -53,12 +70,11 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="cgroup_code" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <select asp-for="cgroup_code" class="form-control" asp-items="@ViewBag.cgroup_code"></select>
+                                                    <select asp-for="cgroup_code" class="form-control" asp-items="@ViewBag.cgroup_code" asp-is-disabled="@ViewBag.IsDetails"></select>
                                                 </div>
                                                 <div class="col-md-2 text-right"><label asp-for="ctype_code" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    @*<select id="district_code" name="district_code" class="form-control"></select>*@
-                                                    <select asp-for="ctype_code" class="form-control"></select>
+                                                    <select asp-for="ctype_code" class="form-control" asp-is-disabled="@ViewBag.IsDetails" ></select>
                                                 </div>
                                             </div>
                                         </div>
@@ -66,7 +82,7 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="course_desc" class="control-label"></label></div>
                                                 <div class="col-md-10">
-                                                    <input asp-for="course_desc" class="form-control" />
+                                                    <input asp-for="course_desc" class="form-control" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="course_desc" class="text-danger" />
                                                 </div>
                                             </div>
@@ -76,9 +92,9 @@
                                                 <div class="col-md-2 text-right"><label asp-for="course_date" class="control-label"></label></div>
                                                 <div class="col-md-4">
                                                     <div class="input-group">
-                                                        <input asp-for="course_date" class="form-control" readonly style="background-color:white">
+                                                        <input asp-for="course_date" class="form-control" readonly style="@(Html.Raw(!ViewBag.IsDetails ? "background-color:white" : ""))">
                                                         <span class="input-group-btn">
-                                                            <button id="course_date_button" class="btn btn-default" type="button">
+                                                            <button id="course_date_button" class="btn btn-default" type="button" @(Html.Raw(ViewBag.IsDetails ? "disabled=\"disabled\"" : ""))>
                                                                 <i class="fa fa-calendar"></i>
                                                             </button>
                                                         </span>
@@ -88,9 +104,9 @@
                                                 <div class="col-md-2 text-right"><label asp-for="course_approve_date" class="control-label"></label></div>
                                                 <div class="col-md-4">
                                                     <div class="input-group">
-                                                        <input asp-for="course_approve_date" class="form-control" readonly style="background-color:white">
+                                                        <input asp-for="course_approve_date" class="form-control" readonly style="@(Html.Raw(!ViewBag.IsDetails ? "background-color:white" : ""))">
                                                         <span class="input-group-btn">
-                                                            <button id="course_approve_date_button" class="btn btn-default" type="button">
+                                                            <button id="course_approve_date_button" class="btn btn-default" type="button" @(Html.Raw(ViewBag.IsDetails ? "disabled=\"disabled\"" : ""))>
                                                                 <i class="fa fa-calendar"></i>
                                                             </button>
                                                         </span>
@@ -104,9 +120,9 @@
                                                 <div class="col-md-2 text-right"><label asp-for="course_begin" class="control-label"></label></div>
                                                 <div class="col-md-4">
                                                     <div class="input-group">
-                                                        <input asp-for="course_begin" class="form-control" readonly style="background-color:white">
+                                                        <input asp-for="course_begin" class="form-control" readonly style="@(Html.Raw(!ViewBag.IsDetails ? "background-color:white" : ""))">
                                                         <span class="input-group-btn">
-                                                            <button id="course_begin_button" class="btn btn-default" type="button">
+                                                            <button id="course_begin_button" class="btn btn-default" type="button" @(Html.Raw(ViewBag.IsDetails ? "disabled=\"disabled\"" : ""))>
                                                                 <i class="fa fa-calendar"></i>
                                                             </button>
                                                         </span>
@@ -116,9 +132,9 @@
                                                 <div class="col-md-2 text-right"><label asp-for="course_end" class="control-label"></label></div>
                                                 <div class="col-md-4">
                                                     <div class="input-group">
-                                                        <input asp-for="course_end" class="form-control" readonly style="background-color:white">
+                                                        <input asp-for="course_end" class="form-control" readonly style="@(Html.Raw(!ViewBag.IsDetails ? "background-color:white" : ""))">
                                                         <span class="input-group-btn">
-                                                            <button id="course_end_button" class="btn btn-default" type="button">
+                                                            <button id="course_end_button" class="btn btn-default" type="button" @(Html.Raw(ViewBag.IsDetails ? "disabled=\"disabled\"" : ""))>
                                                                 <i class="fa fa-calendar"></i>
                                                             </button>
                                                         </span>
@@ -131,12 +147,12 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="budget" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="budget" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" />
+                                                    <input asp-for="budget" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="budget" class="text-danger" />
                                                 </div>
                                                 <div class="col-md-2 text-right"><label asp-for="ref_doc" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="ref_doc" class="form-control" />
+                                                    <input asp-for="ref_doc" class="form-control" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="ref_doc" class="text-danger" />
                                                 </div>
                                             </div>
@@ -145,12 +161,12 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="charge_head" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="charge_head" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" />
+                                                    <input asp-for="charge_head" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="charge_head" class="text-danger" />
                                                 </div>
                                                 <div class="col-md-2 text-right"><label asp-for="support_head" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="support_head" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" />
+                                                    <input asp-for="support_head" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="support_head" class="text-danger" />
                                                 </div>
                                             </div>
@@ -159,7 +175,7 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="project_manager" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="project_manager" class="form-control" />
+                                                    <input asp-for="project_manager" class="form-control" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="project_manager" class="text-danger" />
                                                 </div>
                                             </div>
@@ -168,12 +184,12 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="target_member_join" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="target_member_join" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" />
+                                                    <input asp-for="target_member_join" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="target_member_join" class="text-danger" />
                                                 </div>
                                                 <div class="col-md-2 text-right"><label asp-for="active_member_join" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="active_member_join" class="form-control" readonly value="@ViewBag.active_member_join" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" />
+                                                    <input asp-for="active_member_join" class="form-control" readonly value="@ViewBag.active_member_join" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="active_member_join" class="text-danger" />
                                                 </div>
                                             </div>
@@ -187,7 +203,7 @@
                                                 </div>
                                                 <div class="col-md-2 text-right"><label asp-for="passed_score" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="passed_score" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" />
+                                                    <input asp-for="passed_score" class="form-control" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="10" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="passed_score" class="text-danger" />
                                                 </div>
                                             </div>
@@ -196,7 +212,7 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="x_status" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <select asp-for="x_status" class="form-control" asp-items="@Html.x_status_SelectList()"></select>
+                                                    <select asp-for="x_status" class="form-control" asp-items="@Html.x_status_SelectList()" asp-is-disabled="@ViewBag.IsDetails"></select>
                                                 </div>
                                             </div>
                                         </div>
@@ -277,6 +293,7 @@
             $('#cgroup_code').trigger("change");
             setTimeout(function () {
                 $('#ctype_code').val('@ViewBag.ctype_code');
+                if ('@ViewBag.IsDetails'=='True') {$('#ctype_code').prop("disabled", true);}
             }, 300);
 
             a_details_as_table();
@@ -289,7 +306,7 @@
         }
         function a_details_as_table() {
             $.ajax({
-                type: 'get', url: '@Url.Action("DetailsAsTableMember", "project_course_register")' + '?course_code=' + $('#course_code').val(),
+                type: 'get', url: '@Url.Action("DetailsAsTableMember", "project_course_register")' + '?course_code=' + $('#course_code').val() + '&v=@(Html.Raw(ViewBag.IsDetails ? "1" : ""))',
             }).done(function (resp) {
                 $('#a_details_as_table').html(resp);
                 var w = [

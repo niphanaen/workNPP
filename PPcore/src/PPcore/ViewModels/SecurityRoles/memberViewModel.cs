@@ -10,5 +10,6 @@ namespace PPcore.ViewModels.SecurityRoles
     {
         public Models.SecurityRoles SecurityRoles { get; set; }
         public int memberCount { get; set; }
+        public string panelColorCSS { get; set; }
     }
 }

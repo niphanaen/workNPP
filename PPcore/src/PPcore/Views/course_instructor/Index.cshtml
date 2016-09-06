@@ -12,15 +12,31 @@
             <div class="panel panel-blue">
                 <div class="panel-body">
                     <ul class="nav nav-tabs">
-                        <li >
-                            <a data-toggle="tab" onclick="location.href='@Url.Action("CourseEdit", "project_course")'+'/'+'@ViewBag.courseId'">หลักสูตรอบรม</a>
-                        </li>
-                        <li class="active">
-                            <a data-toggle="tab">วิทยากร</a>
-                        </li>
-                        <li>
-                            <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "course_train_place")'+'?id='+'@ViewBag.courseId'">สถานที่จัดอบรม</a>
-                        </li>
+                        @if (!ViewBag.IsDetails)
+                        {
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("CourseEdit", "project_course")'+'?id=@ViewBag.courseId'">หลักสูตรอบรม</a>
+                            </li>
+                            <li class="active">
+                                <a data-toggle="tab">วิทยากร</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "course_train_place")'+'?id=@ViewBag.courseId'">สถานที่จัดอบรม</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("CourseEdit", "project_course")'+'?id=@ViewBag.courseId&v=1'">หลักสูตรอบรม</a>
+                            </li>
+                            <li class="active">
+                                <a data-toggle="tab">วิทยากร</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "course_train_place")'+'?id=@ViewBag.courseId&v=1'">สถานที่จัดอบรม</a>
+                            </li>
+                        }
+
                     </ul>
                     <div style="background-color:#093D6A;height:8px;"></div>
                     <br />
@@ -29,14 +45,17 @@
                         <div class="panel panel-blue">
                             <div class="panel-heading">
                                 <div class="pull-left" style="padding-top:5px;">แสดงข้อมูลทั้งหมด</div>
-                                <div class="pull-right" style="margin-top:-2px;">
-                                    กดปุ่มเพิ่ม ถ้าต้องการใส่มากกว่า 1 รายการ&nbsp;&nbsp;&nbsp;
-                                    <button id="btnCreate" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-file" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;&nbsp;เพิ่ม&nbsp;&nbsp;&nbsp;&nbsp;</button>
-                                    @*<button id="btnEdit" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-pencil-square-o" aria-hidden="true" style="color:white;"></i>&nbsp;แก้ไข&nbsp;&nbsp;</button>
-                                        <button id="btnDetails" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-file-text" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;ดูข้อมูล</button>*@
-                                    <button id="btnDelete" class="btn btn-default btn-panel-yellow">&nbsp;&nbsp;<i class="fa fa-eraser" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;ลบ&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                @if (!ViewBag.IsDetails)
+                                {
+                                    <div class="pull-right" style="margin-top:-2px;">
+                                        กดปุ่มเพิ่ม ถ้าต้องการใส่มากกว่า 1 รายการ&nbsp;&nbsp;&nbsp;
+                                        <button id="btnCreate" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-file" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;&nbsp;เพิ่ม&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                        @*<button id="btnEdit" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-pencil-square-o" aria-hidden="true" style="color:white;"></i>&nbsp;แก้ไข&nbsp;&nbsp;</button>
+                                            <button id="btnDetails" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-file-text" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;ดูข้อมูล</button>*@
+                                        <button id="btnDelete" class="btn btn-default btn-panel-yellow">&nbsp;&nbsp;<i class="fa fa-eraser" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;ลบ&nbsp;&nbsp;&nbsp;&nbsp;</button>
 
-                                </div>
+                                    </div>
+                                }
                             </div>
 
                             <!-- /.panel-heading -->

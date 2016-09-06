@@ -29,7 +29,7 @@ namespace PPcore.Controllers
                     new SelectListItem { Text = "O", Value = "O", Selected = true },
                     new SelectListItem { Text = "A", Value = "A"},
                     new SelectListItem { Text = "B", Value = "B"},
-                    new SelectListItem { Text = "AB", Value = "AB"},
+                    new SelectListItem { Text = "AB", Value = "C"},
                 }, "Value", "Text");
             
             var member = _context.member.Single(m => m.id == new Guid(memberId));

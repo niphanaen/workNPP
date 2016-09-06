@@ -1,26 +1,30 @@
 ﻿/*==============================================================*/
 /* Table: SecurityMemberRoles                                   */
 /*==============================================================*/
+
 CREATE TABLE SecurityMemberRoles (
 	MemberId uniqueidentifier NOT NULL,
-    RoleId uniqueidentifier NOT NULL,
+    -- RoleId uniqueidentifier NOT NULL,
 	CreatedBy uniqueidentifier NOT NULL,
 	CreatedDate DATETIME NOT NULL,
 	EditedBy uniqueidentifier NOT NULL,
-	EditedDate DATETIME not null default CURRENT_TIMESTAMP,
+	EditedDate DATETIME NOT NULL,
+	LoggedInDate DATETIME NULL,
+	LoggedOutDate DATETIME NULL,
 	x_status char(1) null,
 	x_note nvarchar(50) null,
 	x_log nvarchar(500) null
 );
 GO
 
-CREATE NONCLUSTERED INDEX IX_SecurityMemberRoles_RoleId ON SecurityMemberRoles(RoleId ASC);
-GO
+--CREATE NONCLUSTERED INDEX IX_SecurityMemberRoles_RoleId ON SecurityMemberRoles(RoleId ASC);
+--GO
 
-CREATE NONCLUSTERED INDEX IX_SecurityMemberRoles_MemberId ON SecurityMemberRoles(MemberId ASC);
-GO
+--CREATE NONCLUSTERED INDEX IX_SecurityMemberRoles_MemberId ON SecurityMemberRoles(MemberId ASC);
+--GO
 
-ALTER TABLE SecurityMemberRoles ADD CONSTRAINT PK_SecurityMemberRoles PRIMARY KEY CLUSTERED (MemberId ASC, RoleId ASC);
+--ALTER TABLE SecurityMemberRoles ADD CONSTRAINT PK_SecurityMemberRoles PRIMARY KEY CLUSTERED (MemberId ASC, RoleId ASC);
+ALTER TABLE SecurityMemberRoles ADD CONSTRAINT PK_SecurityMemberRoles PRIMARY KEY (MemberId);
 GO
 
 /*==============================================================*/
@@ -50,14 +54,9 @@ GO
 /*==============================================================*/
 CREATE TABLE SecurityRoleMenus (
 	RoleId uniqueidentifier NOT NULL,
-    MenuId uniqueidentifier NOT NULL,
-	CreatedBy uniqueidentifier NOT NULL,
-	CreatedDate DATETIME NOT NULL,
+    MenuId int NOT NULL,
 	EditedBy uniqueidentifier NOT NULL,
-	EditedDate DATETIME not null default CURRENT_TIMESTAMP,
-	x_status char(1) null,
-	x_note nvarchar(50) null,
-	x_log nvarchar(500) null
+	EditedDate DATETIME not null default CURRENT_TIMESTAMP
 );
 GO
 
@@ -68,29 +67,18 @@ GO
 /* Table: SecurityMenus                                         */
 /*==============================================================*/
 CREATE TABLE SecurityMenus (
-    MenuId uniqueidentifier NOT NULL,
+	MenuId int NOT NULL,
+	Level int NOT NULL,
+	HaveChild int NOT NULL,
+	IsRightAlign int NOT NULL,
     MenuName NVARCHAR(100) NULL,
+	MenuDisplay NVARCHAR(200) NULL,
 	MenuController VARCHAR(100) NULL,
 	MenuAction VARCHAR(100) NULL,
-	CreatedBy uniqueidentifier NOT NULL,
-	CreatedDate DATETIME NOT NULL,
-	EditedBy uniqueidentifier NOT NULL,
-	EditedDate DATETIME not null default CURRENT_TIMESTAMP,
-	x_status char(1) null,
-	x_note nvarchar(50) null,
-	x_log nvarchar(500) null
+	MenuUrl VARCHAR(200) NULL
 );
-GO
-
-CREATE NONCLUSTERED INDEX IX_SecurityMenus_MenuController ON SecurityMenus(MenuController ASC);
-GO
-
-CREATE NONCLUSTERED INDEX IX_SecurityMenus_MenuAction ON SecurityMenus(MenuAction ASC);
 GO
 
 ALTER TABLE SecurityMenus ADD CONSTRAINT PK_SecurityMenus PRIMARY KEY CLUSTERED (MenuId ASC);
 GO
 
-INSERT INTO [dbo].[SecurityRoles] ([RoleId], [RoleName], [CreatedBy], [CreatedDate], [EditedBy], [EditedDate], [x_status], [x_note], [x_log]) VALUES (N'9a1a4601-f5ee-4087-b97d-d69e7f9bfd7e', N'Operators', N'f5e3130e-aa2e-4e82-8cf6-af887a955eb8', N'2016-08-18 09:43:38', N'a6e221e4-6f2b-413c-97c2-1b282cfca657', N'2016-08-18 09:43:38', N'Y', NULL, NULL)
-INSERT INTO [dbo].[SecurityRoles] ([RoleId], [RoleName], [CreatedBy], [CreatedDate], [EditedBy], [EditedDate], [x_status], [x_note], [x_log]) VALUES (N'c5a644a2-97b0-40e5-aa4d-e2afe4cdf428', N'Administrators', N'9f514d3a-2344-424b-9735-b58e828fa9f0', N'2016-08-18 09:43:29', N'd003ce81-285b-40d3-95dd-7d6309fc2555', N'2016-08-18 09:43:29', N'Y', NULL, NULL)
-INSERT INTO [dbo].[SecurityRoles] ([RoleId], [RoleName], [CreatedBy], [CreatedDate], [EditedBy], [EditedDate], [x_status], [x_note], [x_log]) VALUES (N'17822a90-1029-454a-b4c7-f631c9ca6c7d', N'Members', N'c08497b4-cc74-4a06-b953-6c606e64c6ef', N'2016-08-18 09:43:46', N'24d99240-640d-4886-8b66-30e44375e744', N'2016-08-18 09:43:46', N'Y', NULL, NULL)

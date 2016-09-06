@@ -71,7 +71,7 @@
         $('#btnDetails').on('click', function () {
             var table = $('#a_table').DataTable();
             var datarow = table.row('.selected').data();
-            window.location.href = "@Url.Action("CourseDetails", "project_course")" + "/" + datarow[1];
+            window.location.href = "@Url.Action("CourseEdit", "project_course")" + "?id=" + datarow[1] + "&v=1";
         });
     </script>
 }

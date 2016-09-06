@@ -1,4 +1,5 @@
 ﻿@model PPcore.Models.project
+@addTagHelper "*, PPcore"
 
 <div id="page-wrapper">
     <div class="row">
@@ -14,12 +15,26 @@
                         <li class="active">
                             <a data-toggle="tab">โครงการ</a>
                         </li>
-                        <li>
-                            <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "project_supporter")'+'?id='+'@Model.id'">ผู้สนับสนุน</a>
-                        </li>
-                        <li>
-                            <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "project_course")'+'?id='+'@Model.id'">หลักสูตร</a>
-                        </li>
+                        @if (!ViewBag.IsDetails)
+                        {
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "project_supporter")'+'?id=@Model.id'">ผู้สนับสนุน</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "project_course")'+'?id=@Model.id'">หลักสูตร</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "project_supporter")'+'?id=@Model.id&v=1'">ผู้สนับสนุน</a>
+                            </li>
+                            <li>
+                                <a data-toggle="tab" onclick="location.href='@Url.Action("Index", "project_course")'+'?id=@Model.id&v=1'">หลักสูตร</a>
+                            </li>
+
+                        }
+
                     </ul>
                     <div style="background-color:#093D6A;height:8px;"></div>
                     <br />
@@ -27,7 +42,10 @@
 
                         <form asp-action="Edit">
                             <div class="pull-right" style="margin-top:-72px;">
-                                <button id="btnSave" type="submit" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-floppy-o" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;จัดเก็บ&nbsp;&nbsp;</button>
+                                @if (!ViewBag.IsDetails)
+                                {
+                                    <button id="btnSave" type="submit" class="btn btn-default btn-panel-yellow">&nbsp;<i class="fa fa-floppy-o" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;จัดเก็บ&nbsp;&nbsp;</button>
+                                }
                                 <div id="btnDetails" class="btn btn-default btn-panel-yellow" onclick="location.href='@Url.Action("Index", "projects")'">&nbsp;<i class="fa fa-file-text" aria-hidden="true" style="color:white;"></i>&nbsp;&nbsp;ดูข้อมูลทั้งหมด</div>
                             </div>
                             <div class="form-horizontal">
@@ -44,9 +62,9 @@
                                                 <div class="col-md-2 text-right"><label asp-for="project_date" class="control-label"></label></div>
                                                 <div class="col-md-4">
                                                     <div class="input-group">
-                                                        <input asp-for="project_date" class="form-control" readonly style="background-color:white">
+                                                        <input asp-for="project_date" class="form-control" readonly  style="@(Html.Raw(!ViewBag.IsDetails ? "background-color:white" : ""))" asp-is-disabled="@ViewBag.IsDetails"  />
                                                         <span class="input-group-btn">
-                                                            <button id="project_date_button" class="btn btn-default" type="button">
+                                                            <button id="project_date_button" class="btn btn-default" type="button" @(Html.Raw(ViewBag.IsDetails ? "disabled=\"disabled\"" : ""))>
                                                                 <i class="fa fa-calendar"></i>
                                                             </button>
                                                         </span>
@@ -60,7 +78,7 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="project_desc" class="control-label"></label></div>
                                                 <div class="col-md-10">
-                                                    <input asp-for="project_desc" class="form-control" />
+                                                    <input asp-for="project_desc" class="form-control" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="project_desc" class="text-danger" />
                                                 </div>
                                             </div>
@@ -71,9 +89,9 @@
                                                 <div class="col-md-2 text-right"><label asp-for="project_approve_date" class="control-label"></label></div>
                                                 <div class="col-md-4">
                                                     <div class="input-group">
-                                                        <input asp-for="project_approve_date" class="form-control" readonly style="background-color:white">
+                                                        <input asp-for="project_approve_date" class="form-control" readonly style="@(Html.Raw(!ViewBag.IsDetails ? "background-color:white" : ""))" asp-is-disabled="@ViewBag.IsDetails">
                                                         <span class="input-group-btn">
-                                                            <button id="project_approve_date_button" class="btn btn-default" type="button">
+                                                            <button id="project_approve_date_button" class="btn btn-default" type="button" @(Html.Raw(ViewBag.IsDetails ? "disabled=\"disabled\"" : "")) >
                                                                 <i class="fa fa-calendar"></i>
                                                             </button>
                                                         </span>
@@ -82,7 +100,7 @@
                                                 </div>
                                                 <div class="col-md-2 text-right"><label asp-for="ref_doc" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="ref_doc" class="form-control" />
+                                                    <input asp-for="ref_doc" class="form-control" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="ref_doc" class="text-danger" />
                                                 </div>
                                             </div>
@@ -92,12 +110,12 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="budget" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="budget" class="form-control" />
+                                                    <input asp-for="budget" class="form-control" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="budget" class="text-danger" />
                                                 </div>
                                                 <div class="col-md-2 text-right"><label asp-for="project_manager" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="project_manager" class="form-control" />
+                                                    <input asp-for="project_manager" class="form-control" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="project_manager" class="text-danger" />
                                                 </div>
                                             </div>
@@ -107,7 +125,7 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="target_member_join" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="target_member_join" class="form-control" />
+                                                    <input asp-for="target_member_join" class="form-control" asp-is-disabled="@ViewBag.IsDetails" />
                                                     <span asp-validation-for="target_member_join" class="text-danger" />
                                                 </div>
                                                 <div class="col-md-2 text-right"><label asp-for="active_member_join" class="control-label"></label></div>
@@ -123,12 +141,12 @@
                                             <div class="row">
                                                 <div class="col-md-2 text-right"><label asp-for="passed_member" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <input asp-for="passed_member" class="form-control" readonly value="@ViewBag.passed_member"/>
+                                                    <input asp-for="passed_member" class="form-control" readonly value="@ViewBag.passed_member" asp-is-disabled="@ViewBag.IsDetails"/>
                                                     <span asp-validation-for="passed_member" class="text-danger" />
                                                 </div>
                                                 <div class="col-md-2 text-right"><label asp-for="x_status" class="control-label"></label></div>
                                                 <div class="col-md-4">
-                                                    <select asp-for="x_status" class="form-control" asp-items="@Html.x_status_SelectList()"></select>
+                                                    <select asp-for="x_status" class="form-control" asp-items="@Html.x_status_SelectList()" asp-is-disabled="@ViewBag.IsDetails"></select>
                                                 </div>
                                             </div>
                                         </div>

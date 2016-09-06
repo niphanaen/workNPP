@@ -59,24 +59,6 @@ namespace PPcore.Controllers
             return View("DetailsAsTableBySponsor", pjs.ToList());
         }
 
-        // GET: projects/Details/5
-        public async Task<IActionResult> Details(string id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var project = await _context.project.SingleOrDefaultAsync(m => m.project_code == id);
-            if (project == null)
-            {
-                return NotFound();
-            }
-
-            return View(project);
-        }
-
-        // GET: projects/Create
         public IActionResult Create()
         {
             return View();
@@ -94,8 +76,7 @@ namespace PPcore.Controllers
             return View(project);
         }
 
-        // GET: projects/Edit/5
-        public async Task<IActionResult> Edit(string id)
+        public async Task<IActionResult> Edit(string id, string v)
         {
             if (id == null)
             {
@@ -116,6 +97,7 @@ namespace PPcore.Controllers
             }
             ViewBag.active_member_join = countJoin;
             ViewBag.passed_member = countPassed;
+            if (!String.IsNullOrEmpty(v)) { ViewBag.IsDetails = true;  } else { ViewBag.IsDetails = false; }
             return View(project);
         }
 

@@ -15,12 +15,15 @@ using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Microsoft.EntityFrameworkCore;
 using PPcore.Services;
+using PPcore.Helpers;
+using System.Data.SqlClient;
 
 namespace PPcore.Controllers
 {
     public class membersController : Controller
     {
         private PalangPanyaDBContext _context;
+        private SecurityDBContext _scontext;
         private readonly IEmailSender _emailSender;
         private IConfiguration _configuration;
         private IHostingEnvironment _env;
@@ -65,11 +68,15 @@ namespace PPcore.Controllers
             var ip = _context.ini_province.OrderBy(p => p.province_code).Select(p => new { Value = p.province_code, Text = p.pro_desc }).ToList();
             ip.Insert(0, (new { Value = "0", Text = "" }));
             ViewBag.ini_province = new SelectList(ip.AsEnumerable(), "Value", "Text", "0");
+
+            ViewBag.IsCreate = 0; ViewBag.IsEdit = 0; ViewBag.IsDetails = 0; ViewBag.IsDetailsPersonal = 0;
+            ViewBag.IsDisabled = false; ViewBag.IsMember = false;
         }
 
-        public membersController(PalangPanyaDBContext context, IEmailSender emailSender, IConfiguration configuration, IHostingEnvironment env)
+        public membersController(PalangPanyaDBContext context, SecurityDBContext scontext, IEmailSender emailSender, IConfiguration configuration, IHostingEnvironment env)
         {
             _context = context;
+            _scontext = scontext;
             _emailSender = emailSender;
             _configuration = configuration;
             _env = env;
@@ -85,27 +92,11 @@ namespace PPcore.Controllers
         // GET: members
         public IActionResult Index()
         {
-            //if (User.IsInRole("Administrators") || User.IsInRole("Operators"))
-            //{
-                var pp = _context.member; //.Include(m => m.ini_list_zip).Include(m => m.mem_).Include(m => m.mlevel_codeNavigation).Include(m => m.mstatus_codeNavigation);
-                ViewBag.countRecords = pp.Count();
-                return View(pp.OrderByDescending(m => m.rowversion).ToList());
-            //}
-            //else if (User.IsInRole("Members"))
-            //{
-            //    var mcode = User.Identity.Name;
-            //    var m = _context.member.SingleOrDefault(mm => mm.member_code == mcode);
-            //    var mid = m.id;
-            //    return RedirectToAction(nameof(membersController.Edit) + "/" + mid, "members");
-            //}
-            //else
-            //{
-            //    return RedirectToAction(nameof(AccountController.Login), "Account");
-            //}
-
+            var pp = _context.member.Where(ppp => (ppp.mem_role_id == new Guid("17822a90-1029-454a-b4c7-f631c9ca6c7d")) && (ppp.x_status != "N"));
+            ViewBag.countRecords = pp.Count();
+            return View(pp.OrderByDescending(m => m.rowversion).ToList());
         }
 
-        // GET: members/Details/5
         public IActionResult Details(string id)
         {
             if (id == null)
@@ -143,6 +134,8 @@ namespace PPcore.Controllers
             ViewBag.incomeCode = member.income;
 
             prepareViewBag();
+            ViewBag.IsDetails = 1;
+            ViewBag.IsDisabled = true;
             return View(member);
         }
 
@@ -178,6 +171,11 @@ namespace PPcore.Controllers
         // GET: members/DetailsPdf/5
         public FileStreamResult DetailsPdf(String id)
         {
+            // Find who executes this
+            var userId = HttpContext.Session.GetString("memberId");
+            member muser = _context.member.SingleOrDefault(mb => mb.id == new Guid(userId));
+
+            // Who will be printed
             member m = _context.member.SingleOrDefault(mb => mb.id == new Guid(id));
 
             var fname = m.title + " " + m.fname; var lname = m.lname;
@@ -956,7 +954,8 @@ namespace PPcore.Controllers
                         ptable.DefaultCell.Border = Rectangle.NO_BORDER;
                         ptable.DefaultCell.VerticalAlignment = 1;
                         ptable.SetWidths(new float[] { 300f, 230f });
-                        ptable.AddCell(new PdfPCell(new Phrase("Printed by: (Admin) Somsak Saelim Printed date: ", cng)) { Border = Rectangle.NO_BORDER });
+                        var printdate = String.Format("{0:d MMMM yyyy}", DateTime.Now);
+                        ptable.AddCell(new PdfPCell(new Phrase("Printed by: "+ muser.fname + " " + muser.lname + " ("+muser.mem_username+") Printed date: " + printdate, cng)) { Border = Rectangle.NO_BORDER });
                         ptable.AddCell(new PdfPCell(new Phrase(string.Format("Page {0} of {1}", i, n), cng)) { Border = Rectangle.NO_BORDER, HorizontalAlignment = 2 });
                         cb = stamper.GetOverContent(i);
                         ptable.WriteSelectedRows(0, -1, 34, 33, cb);
@@ -983,6 +982,7 @@ namespace PPcore.Controllers
         public IActionResult Create()
         {
             prepareViewBag();
+            ViewBag.IsCreate = 1;
             return View();
         }
 
@@ -990,12 +990,10 @@ namespace PPcore.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         //public IActionResult Create([Bind("member_code,birthdate,building,cid_card,cid_card_pic,cid_type,country_code,current_age,district_code,email,fax,floor,fname,h_no,lane,latitude,lname,longitude,lot_no,marry_status,mem_group_code,mem_photo,mem_type_code,mlevel_code,mobile,mstatus_code,nationality,parent_code,place_name,province_code,religion,room,rowversion,sex,social_app_data,street,subdistrict_code,tel,texta_address,textb_address,textc_address,village,x_log,x_note,x_status,zip_code,zone")] member member)
-
-
         public IActionResult Create(member member)
         {
-            if (ModelState.IsValid)
-            {
+            //if (ModelState.IsValid)
+            //{
                 member.x_status = "Y";
                 if (member.title == "0") { member.title = null; }
                 if (member.marry_status == "0") { member.marry_status = null; }
@@ -1075,7 +1073,11 @@ namespace PPcore.Controllers
 
                     member.cid_card_pic = pic_image.image_code;
                 }
+                member.mem_username = member.cid_card;
                 string password = member.cid_card.Substring(member.cid_card.Length - 4);
+                member.mem_password = Utils.EncodeMd5(password);
+                member.mem_role_id = new Guid("17822a90-1029-454a-b4c7-f631c9ca6c7d"); //Role member
+
                 //var user = new ApplicationUser { UserName = member.cid_card, Email = member.email };
                 //_userManager.CreateAsync(user, password);
                 //_userManager.AddToRoleAsync(user, "Members");
@@ -1103,12 +1105,22 @@ namespace PPcore.Controllers
                 _context.member.Add(member);
                 _context.SaveChanges();
 
+                var sessionMemberId = HttpContext.Session.GetString("memberId");
+                SecurityMemberRoles smr = new SecurityMemberRoles();
+                smr.MemberId = member.id;
+                smr.CreatedDate = DateTime.Now;
+                smr.CreatedBy = new Guid(sessionMemberId);
+                smr.EditedDate = DateTime.Now;
+                smr.EditedBy = new Guid(sessionMemberId);
+                smr.x_status = "Y";
+                _scontext.SecurityMemberRoles.Add(smr);
+                _scontext.SaveChanges();
 
                 return RedirectToAction("Index");
-            }
+            //}
 
-            prepareViewBag();
-            return View(member);
+            //prepareViewBag();
+            //return View(member);
         }
 
         // GET: members/Edit/5
@@ -1149,7 +1161,16 @@ namespace PPcore.Controllers
             ViewBag.incomeCode = member.income;
 
 
-            prepareViewBag();
+            prepareViewBag();ViewBag.IsEdit = 1;
+            var roleId = HttpContext.Session.GetString("roleId");
+            if (roleId != "17822a90-1029-454a-b4c7-f631c9ca6c7d") //Not member
+            {
+                ViewBag.IsMember = false;
+            }
+            else //Is member
+            {
+                ViewBag.IsMember = true;
+            }
             clearImageUpload();
             return View(member);
         }
@@ -1157,7 +1178,7 @@ namespace PPcore.Controllers
         // POST: members/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit(string id, [Bind("income,title,occupation,mail_address,facebook,line,mem_password,member_code,birthdate,building,cid_card,cid_card_pic,cid_type,country_code,current_age,district_code,email,fax,floor,fname,h_no,id,lane,latitude,lname,longitude,lot_no,marry_status,mem_group_code,mem_photo,mem_type_code,mlevel_code,mobile,mstatus_code,nationality,parent_code,place_name,province_code,religion,room,rowversion,sex,street,subdistrict_code,tel,texta_address,textb_address,textc_address,village,x_log,x_note,x_status,zip_code,zone")] member member)
+        public IActionResult Edit(string id, [Bind("income,title,occupation,mail_address,facebook,line,mem_username,mem_password,mem_role_id,member_code,birthdate,building,cid_card,cid_card_pic,cid_type,country_code,current_age,district_code,email,fax,floor,fname,h_no,id,lane,latitude,lname,longitude,lot_no,marry_status,mem_group_code,mem_photo,mem_type_code,mlevel_code,mobile,mstatus_code,nationality,parent_code,place_name,province_code,religion,room,rowversion,sex,street,subdistrict_code,tel,texta_address,textb_address,textc_address,village,x_log,x_note,x_status,zip_code,zone")] member member)
         {
             if (ModelState.IsValid)
             {
@@ -1264,10 +1285,22 @@ namespace PPcore.Controllers
                     member.cid_card_pic = pic_image.image_code;
                 }
 
+                //member.mem_username = "";
+                //member.mem_password = Utils.EncodeMd5(password);
+                //member.mem_role_id = new Guid("17822a90-1029-454a-b4c7-f631c9ca6c7d"); //Role member
 
                 _context.Update(member);
                 _context.SaveChanges();
-                return RedirectToAction("Index");
+                var roleId = HttpContext.Session.GetString("roleId");
+                if (roleId != "17822a90-1029-454a-b4c7-f631c9ca6c7d") //Not member
+                {
+                    return RedirectToAction("Index");
+                }
+                else //Is member
+                {
+                    return RedirectToAction("DetailsPersonal","members");
+                }
+
             }
             prepareViewBag();
             return View(member);
@@ -1387,6 +1420,173 @@ namespace PPcore.Controllers
                 t.Add(new tab { name = "mem_product", value = 0 });
             }
             return Json(JsonConvert.SerializeObject(t));
+        }
+
+        [HttpGet]
+        public IActionResult SecurityDetailsAsTable(string roleId)
+        {
+            //var ms = _context.member.Where(mss => mss.mem_role_id == new Guid(roleId)).OrderBy(mss => mss.mem_username).ToList();
+            //List<PPcore.ViewModels.member.SecurityMemberRolesViewModel> mvs = new List<ViewModels.member.SecurityMemberRolesViewModel>();
+            //foreach (member mem in ms)
+            //{
+            //    PPcore.ViewModels.member.SecurityMemberRolesViewModel mv = new PPcore.ViewModels.member.SecurityMemberRolesViewModel();
+            //    mv.memberId = mem.id;
+            //    mv.mem_username = mem.mem_username;
+            //    mv.displayname = (mem.fname + " " + mem.lname).Trim();
+
+            //    var smr = _scontext.SecurityMemberRoles.SingleOrDefault(smrr => smrr.MemberId == mem.id);
+
+            //    mv.email = mem.email;
+            //    mv.LoggedInDate = smr.LoggedInDate;
+            //    mv.LoggedOutDate = smr.LoggedOutDate;
+            //    mv.CreatedDate = smr.CreatedDate;
+            //    mv.CreatedBy = smr.CreatedBy;
+            //    mv.EditedDate = smr.EditedDate;
+            //    mv.EditedBy = smr.EditedBy;
+            //    mv.Status = smr.x_status;
+
+
+            //    var mc = _context.member.SingleOrDefault(mcc => mcc.id == mv.CreatedBy);
+            //    if (mc != null) {
+            //        //mv.CreatedByUserName = (mc.fname + " " + mc.lname).Trim();
+            //        mv.CreatedByUserName = mc.mem_username;
+            //    } else { mv.CreatedByUserName = ""; }
+                
+
+            //    var me = _context.member.SingleOrDefault(mee => mee.id == mv.EditedBy);
+            //    if (me != null) {
+            //        //mv.EditedByUserName = (me.fname + " " + me.lname).Trim();
+            //        mv.EditedByUserName = me.mem_username;
+            //    } else { mv.EditedByUserName = ""; }
+
+            //    mvs.Add(mv);
+            //}
+
+            var ms = _context.member.Where(mss => mss.mem_role_id == new Guid(roleId))
+                .Select(mss => new { mss.id, mss.mem_username, mss.fname, mss.lname, mss.email })
+                .OrderBy(mss => mss.mem_username).ToArray();
+            List<PPcore.ViewModels.member.SecurityMemberRolesViewModel> mvs = new List<ViewModels.member.SecurityMemberRolesViewModel>();
+            foreach (var mem in ms)
+            {
+                PPcore.ViewModels.member.SecurityMemberRolesViewModel mv = new PPcore.ViewModels.member.SecurityMemberRolesViewModel();
+                mv.memberId = mem.id;
+                mv.mem_username = mem.mem_username;
+                mv.displayname = (mem.fname + " " + mem.lname).Trim();
+
+                var smr = _scontext.SecurityMemberRoles.SingleOrDefault(smrr => smrr.MemberId == mem.id);
+
+                mv.email = mem.email;
+                mv.LoggedInDate = smr.LoggedInDate;
+                mv.LoggedOutDate = smr.LoggedOutDate;
+                mv.CreatedDate = smr.CreatedDate;
+                mv.CreatedBy = smr.CreatedBy;
+                mv.EditedDate = smr.EditedDate;
+                mv.EditedBy = smr.EditedBy;
+                mv.Status = smr.x_status;
+
+
+                var mc = _context.member.SingleOrDefault(mcc => mcc.id == mv.CreatedBy);
+                if (mc != null)
+                {
+                    //mv.CreatedByUserName = (mc.fname + " " + mc.lname).Trim();
+                    mv.CreatedByUserName = mc.mem_username;
+                }
+                else { mv.CreatedByUserName = ""; }
+
+
+                var me = _context.member.SingleOrDefault(mee => mee.id == mv.EditedBy);
+                if (me != null)
+                {
+                    //mv.EditedByUserName = (me.fname + " " + me.lname).Trim();
+                    mv.EditedByUserName = me.mem_username;
+                }
+                else { mv.EditedByUserName = ""; }
+
+                mvs.Add(mv);
+            }
+            return View(mvs);
+        }
+
+        [HttpPost]
+        public IActionResult SecurityCreateUser(string roleId, string uname, string email, string upwd)
+        {
+            var m = _context.member.SingleOrDefault(mm => mm.mem_username == uname.ToUpper());
+            if (m != null)
+            {
+                return Json(new { result = "dup" });
+            }
+            else
+            {
+                member nm = new member();
+                nm.member_code = "U" + DateTime.Now.ToString("yyMMddHHmmssfffffff");
+                nm.mem_username = uname.ToUpper();
+                nm.fname = uname.ToUpper();
+                upwd = Utils.GeneratePassword();
+                nm.mem_password = Utils.EncodeMd5(upwd);
+                nm.mem_role_id = new Guid(roleId);
+                nm.email = email;
+                _context.Add(nm);
+                _context.SaveChanges();
+
+                var memberId = HttpContext.Session.GetString("memberId");
+                SecurityMemberRoles nmr = new SecurityMemberRoles();
+                nmr.MemberId = nm.id;
+                nmr.x_status = "Y";
+                nmr.CreatedBy = new Guid(memberId);
+                nmr.CreatedDate = DateTime.Now;
+                nmr.EditedBy = new Guid(memberId);
+                nmr.EditedDate = DateTime.Now;
+                _scontext.Add(nmr);
+                _scontext.SaveChanges();
+
+                SendEmail(email,uname,upwd);
+
+                return Json(new { result = "success" });
+            }
+
+        }
+
+        public IActionResult DetailsPersonal()
+        {
+            var id = HttpContext.Session.GetString("memberId");
+            if (id == null)
+            {
+                return NotFound();
+            }
+
+            member member = _context.member.Single(m => m.id == new Guid(id));
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            if (!String.IsNullOrEmpty(member.mem_photo))
+            {
+                //pic_image m = _context.pic_image.Single(i => i.image_code == member.mem_photo);
+                //ViewBag.memPhoto = m.image_name;
+                ViewBag.memPhoto = member.mem_photo;
+            }
+
+            if (!String.IsNullOrEmpty(member.cid_card_pic))
+            {
+                //pic_image c = _context.pic_image.Single(i => i.image_code == member.cid_card_pic);
+                //ViewBag.cidCardPhoto =c.image_name;
+                ViewBag.cidCardPhoto = member.cid_card_pic;
+            }
+            ViewBag.memberId = id;
+            ViewBag.TabNoData = "";
+
+            //For dropdown province; we need to manually assign it, then prepare viewbag for javascript
+            ViewBag.zipCode = member.zip_code;
+            ViewBag.subdistrictCode = member.subdistrict_code;
+            ViewBag.districtCode = member.district_code;
+            //ViewBag.provinceCode = member.province_code;
+            ViewBag.incomeCode = member.income;
+
+            prepareViewBag();
+            ViewBag.IsDetailsPersonal = 1;
+            ViewBag.IsDisabled = true;
+            return View(member);
         }
 
         private class listTraining

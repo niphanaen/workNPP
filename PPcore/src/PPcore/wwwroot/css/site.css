@@ -34,9 +34,12 @@ height:90vh;
 .txt-color-black { color: #000; }
 .txt-color-blue { color: #093D6A; }
 .txt-color-red { color: red; }
-.bg-color-green { background-color: #5cb85c; }
-.bg-color-blue { background-color:#093D6A; }
+
+.bg-color-black { background-color:#313131; }
+.bg-color-green { background-color: #5CB85C; }
+.bg-color-blue { background-color:#337AB7; } /*#093D6A;*/
 .bg-color-orange { background-color:#FFC000; }
+
 .box-login {
     border-radius: 10px;
     background-color:#093D6A;
@@ -689,4 +692,41 @@ textarea[data-val-required] {
 
 .panel-dashboard-green a:hover {
     color: #3d8b3d;
+}
+
+#accordion .panel-heading { padding: 0;}
+#accordion .panel-title > a {
+	display: block;
+	padding: 0.4em 0.6em;
+    outline: none;
+    font-size:16px;
+    color: #161616;
+    text-decoration: none;
+}
+
+#accordion .panel-title > a.accordion-toggle::before, #accordion a[data-toggle="collapse"]::before  {
+    content:"\e113";
+    float: right;
+    font-family: 'Glyphicons Halflings';
+	margin-right :1em;
+}
+#accordion .panel-title > a.accordion-toggle.collapsed::before, #accordion a.collapsed[data-toggle="collapse"]::before  {
+    content:"\e114";
+}
+
+.rolemanage-cb-check {
+    cursor:pointer;padding-top:4px;
+    color:#3cb03c;
+}
+
+.rolemanage-cb-uncheck {
+    cursor:pointer;padding-top:4px;
+    color:#403d3d;
+}
+
+.cb-size-18 {
+    font-size:18px;
+}
+.cb-size-18d {
+    font-size:18px;
 }

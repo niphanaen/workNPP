@@ -137,8 +137,7 @@
             });
         }
         function details(roleId) {
-            console.log(roleId);
-
+            window.location.href = '@Url.Action("Manage", "SecurityRoles")?roleId='+roleId;
         }
     </script>
 }

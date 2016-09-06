@@ -1,4 +1,5 @@
 ﻿@model IEnumerable<PPcore.ViewModels.project_course_register.memberViewModel>
+@addTagHelper "*, PPcore"
 @{
     Layout = null;
 }
@@ -35,7 +36,7 @@
                 <td>@Html.DisplayFor(modelItem => item.member.email)</td>
                 <td>@Html.DisplayFor(modelItem => item.member.line)</td>
                 <td>@Html.DisplayFor(modelItem => item.member.facebook)</td>
-                <td><input id="cell-@Html.DisplayFor(modelItem => item.member.id)" class="form-control" style="width:70px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="5" onkeyup="gradeEnter('@Html.DisplayFor(modelItem => item.member.id)','@Html.DisplayFor(modelItem => item.member.member_code)')" value="@Html.DisplayFor(modelItem => item.course_grade)"/></td>
+                <td><input @(Html.Raw(ViewBag.IsDetails ? "disabled=\"disabled\"" : "")) id="cell-@Html.DisplayFor(modelItem => item.member.id)" class="form-control" style="width:70px;" onkeypress="return event.charCode >= 48 && event.charCode <= 57" maxlength="5" onkeyup="gradeEnter('@Html.DisplayFor(modelItem => item.member.id)','@Html.DisplayFor(modelItem => item.member.member_code)')" value="@Html.DisplayFor(modelItem => item.course_grade)"/></td>
             </tr>
         }
     </tbody>

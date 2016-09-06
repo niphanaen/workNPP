@@ -19,12 +19,13 @@ namespace PPcore.Controllers
         }
 
         [HttpGet]
-        public IActionResult Index(string id)
+        public IActionResult Index(string id, string v)
         {
             var c = _context.project_course.SingleOrDefault(m => m.id == new Guid(id));
             ViewBag.courseId = c.id;
             ViewBag.courseCode = c.course_code;
             ViewBag.countRecords = _context.course_instructor.Where(ci => ci.course_code == c.course_code).Count();
+            if (!String.IsNullOrEmpty(v)) { ViewBag.IsDetails = true; } else { ViewBag.IsDetails = false; }
             return View(new course_instructor());
         }
 

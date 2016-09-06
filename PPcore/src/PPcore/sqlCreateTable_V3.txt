@@ -459,7 +459,7 @@ go
 /*==============================================================*/
 create table mem_worklist (
    rec_no               int                  not null,
-   member_code          varchar(30)          null,
+   member_code          varchar(30)          not null,
    company_name_th      nvarchar(100)        null,
    company_name_eng     nvarchar(100)        null,
    position_name_th     nvarchar(100)        null,
@@ -471,7 +471,7 @@ create table mem_worklist (
    x_log                nvarchar(500)        null,
    id uniqueidentifier NOT NULL DEFAULT (newid()),
    rowversion           timestamp            null,
-   constraint pk_mem_worklist primary key (rec_no)
+   constraint pk_mem_worklist primary key (rec_no, member_code)
 )
 go
 
@@ -482,6 +482,7 @@ create table member (
    member_code          varchar(30)          not null,
    mem_username			varchar(50)			 null,
    mem_password			varchar(40)			 null,
+   mem_role_id			uniqueidentifier     null,
    title                nvarchar(100)        null,
    fname                nvarchar(100)        null,
    lname                nvarchar(100)        null,
