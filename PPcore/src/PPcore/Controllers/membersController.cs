@@ -259,7 +259,10 @@ namespace PPcore.Controllers
             var hobby = ""; var special_skill = ""; var special_food = "";
             if (mh != null)
             {
-                medical_history = mh.medical_history; blood_group = mh.blood_group; restrict_food = mh.restrict_food;
+                medical_history = mh.medical_history;
+                blood_group = mh.blood_group;
+                if (blood_group!=null) { blood_group = (blood_group != "C") ? blood_group : "AB"; }
+                restrict_food = mh.restrict_food;
                 hobby = mh.hobby; special_skill = mh.special_skill; special_food = mh.special_food;
             }
 
